@@ -1,7 +1,8 @@
 import gymnasium as gym
 import torch
 
-env = gym.make("LunarLander-v2", render_mode="rgb_array")  # Change the render_mode = "human" for rendering the video
+# env = gym.make("LunarLander-v2", render_mode="rgb_array")  # Change the render_mode = "human" for rendering the video
+env = gym.make("LunarLander-v2", render_mode="rgp_array_list")
 state, info = env.reset()
 
 print(state)
@@ -82,14 +83,25 @@ epsilon = 0.1
 
 optimal_Q, optimal_policy = mc_control_epsilon_greedy(env, gamma, n_episode, epsilon)
 
+# def simulate_episode(env, policy):
+#     state, info = env.reset()
+#     is_done = False
+#     truncated = False
+#     while not (is_done or truncated):
+#         action = policy[state]
+#         state, reward, is_done, truncated, info = env.step(action)
+#         return reward
+
 def simulate_episode(env, policy):
     state, info = env.reset()
     is_done = False
     truncated = False
     while not (is_done or truncated):
-        action = policy[state]
+        state_tuple = tuple((state * 10).astype(int))  # Convert state to a tuple
+        action = policy[state_tuple]  # Use state_tuple as key
         state, reward, is_done, truncated, info = env.step(action)
         return reward
+
     
 n_episode = 50000
 n_win_optimal = 0
